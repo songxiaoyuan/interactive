@@ -1,6 +1,7 @@
 # coding: utf-8
 import pandas as pd
 import csv
+import os
 
 
 def calEma(path,emaperiod):
@@ -11,10 +12,10 @@ def calEma(path,emaperiod):
 	stock_data.to_csv(path, index=False)
 
 # 此函数主要就是根据现在的文件，然后计算，最后进行返回给想要的数据。putAsk ,putBid,theo1,the2,the3
-def writeTheOrderData():
+def writeTheOrderData(path):
 	csvFile = file("./put_call_data.csv","rb")
 	head = 0
-	csvWriteFile = file("./getData.csv","w")
+	csvWriteFile = file(path,"w")
 	writer = csv.writer(csvWriteFile)
 	for line in csv.reader(csvFile):
 		# import pdb
@@ -64,7 +65,7 @@ def caculateTheLineDaoshu(line):
 	return tmp
 
 
-def getCsvFileData():
+def getCsvFileData(putPath,callPath):
 	# 将ｃａｌｌ和ｐｕｔ的两个数据读入到内存中，然后等待处理可以先写入ｃｓｖ中，然后在读。
 	csvHeader = ["putBid","putAsk","putLatPrice","putMiddPoint","putWeightActive","callBid","callAsk","callLatPrice","callMiddPoint","callWeightActive"]
 	csvFile = file("./put_call_data.csv","w")
@@ -72,9 +73,11 @@ def getCsvFileData():
 	writer.writerow(csvHeader)
 	# 开始读取文件，然后将读取的数据插入到新的ｃｓｖ文件中。
 	insertData = []
-	fileput = file('./cleanData_20170522_m1709P2750.csv','rb')
+	# fileput = file('./cleanData_20170522_m1709P2750.csv','rb')
+	fileput = file(putPath,'rb')
 	readerput = csv.reader(fileput)
-	filecall = file('./cleanData_20170522_m1709C2750.csv','rb')
+	# filecall = file('./cleanData_20170522_m1709C2750.csv','rb')
+	filecall = file(callPath,'rb')
 	readercall = csv.reader(filecall)
 	for line in readerput:
 		tmp = caculateTheLine(line)
@@ -91,9 +94,27 @@ def getCsvFileData():
 	fileput.close()
 	filecall.close()
 
+	# 开始处理ＥＭＡ，生产相应的ＭＥＡ数据。
+	calEma("./put_call_data.csv",200)
+
+
 
 if __name__ == '__main__':
 	# calEma()
-	# getCsvFileData()
-	# calEma("./put_call_data.csv",200)
-	writeTheOrderData()
+	tmpSet = set()
+	for root,dirs,files in os.walk("./clean"):
+		for name in files:
+			tmp= os.path.join(root,name)
+			if 'P' in tmp:
+				tmpSet.add(tmp)
+				# cleanCsv(tmp)
+	for item in tmpSet:
+		putPath = item
+		callPath = item.replace('P','C')
+		print callPath
+		getCsvFileData(putPath,callPath)
+		getDataPath = "./getData/"+putPath.split('/')[2][5:]
+		writeTheOrderData(getDataPath)
+	# callPath="clean_20170515_m1709C2700.csv"
+	# getDataPath = "./getData"+callPath[5:]
+	# print getDataPath

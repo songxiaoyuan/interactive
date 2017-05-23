@@ -1,5 +1,6 @@
 # coding: utf-8
 import csv
+import os
 
 # 根据毫秒的交易时间来去除数据，也就是说每一秒有２条数据
 def cleanCsv(path):
@@ -90,11 +91,22 @@ def cleanCsv(path):
 			cleanData.append(line)
 
 	csvFile.close()
-	writeToCsv(cleanData)
+	cleanDataPath = path.split('/')
+	cleanPath = "./clean/"+"clean_"+cleanDataPath[2]
+	print cleanPath
+	writeToCsv(cleanData,cleanPath)
 
-# 将一个二维数组放入到ｃｓｖ文件中。
-def writeToCsv(data):
-	csvFile = file('./cleanData_20170522_m1709P2750.csv','w')
+# 将一个二维数组放入到ｃｓｖ文件中。如果第一个数据是０　的话，自动找到第一个不是０　的，进行填充。
+def writeToCsv(data,path):
+	index =0
+	insertLine =[]
+	for line in data:
+		index +=1
+		if len(str(line[0]))>2:
+			insertLine=line
+	for i in range(0,index):
+		data[i]=insertLine
+	csvFile = file(path,'w')
 	writer = csv.writer(csvFile)
 	for line in data:
 		writer.writerow(line)
@@ -111,4 +123,8 @@ def convertNumToTime(num):
 
 if __name__ == '__main__':
 	print "clean the data"
-	cleanCsv('./20170522_m1709P2750.csv')
+	# cleanCsv('./20170522_m1709P2750.csv')
+	for root,dirs,files in os.walk("./option"):
+		for name in files:
+			tmp= os.path.join(root,name)
+			cleanCsv(tmp)
