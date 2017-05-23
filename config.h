@@ -32,6 +32,7 @@ double NORMALTHRESHOLD = 0;
 char MDFRONT[]   ="tcp://180.168.146.187:10010";
 char TRADEFRONT[]="tcp://180.168.146.187:10000";
 
+//这个是期货的。
 //char MDFRONT[]   ="tcp://180.169.112.50:41213";
 //char TRADEFRONT[]="tcp://180.169.112.50:41205";
 
