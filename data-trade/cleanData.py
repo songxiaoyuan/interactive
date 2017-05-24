@@ -104,6 +104,7 @@ def writeToCsv(data,path):
 		index +=1
 		if len(str(line[0]))>2:
 			insertLine=line
+			break
 	for i in range(0,index):
 		data[i]=insertLine
 	csvFile = file(path,'w')

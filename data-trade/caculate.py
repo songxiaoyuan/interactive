@@ -17,6 +17,7 @@ def writeTheOrderData(path):
 	head = 0
 	csvWriteFile = file(path,"w")
 	writer = csv.writer(csvWriteFile)
+	index =1
 	for line in csv.reader(csvFile):
 		# import pdb
 		# pdb.set_trace()
@@ -25,12 +26,14 @@ def writeTheOrderData(path):
 			continue
 		for i in range(0,len(line)):
 			line[i] = float(line[i])
-		putBid = line[0]
-		putAsk=line[1]
-		putLatPrice = line[7]*(line[10]/line[13])
+		# putBid = line[0]
+		# putAsk=line[1]
+		putLatPrice = line[2]
+		# putLatPrice = line[7]*(line[10]/line[13])
 		putMiddPoint = line[8]*(line[11]/line[14])
 		putWeightActive = line[9]*(line[12]/line[15])
-		tmp = [putBid,putAsk,putLatPrice,putMiddPoint,putWeightActive]
+		tmp = [index,putLatPrice,putMiddPoint,putWeightActive]
+		index +=1
 		for i in range(0,len(tmp)):
 			tmp[i] = round(tmp[i],2)
 		writer.writerow(tmp)
@@ -47,20 +50,20 @@ def caculateTheLine(line):
 	askNum = float(line[25])
 	MiddPoint = (bid+ask)/2
 	# 这个主要是用来保留２位小数。
-	WeightActive = round((ask*bidNum+bid*askNum)/(askNum+bidNum),2)
+	WeightActive =(ask*bidNum+bid*askNum)/(askNum+bidNum)
 	tmp = [bid,ask,lastPrice,MiddPoint,WeightActive]
 	return tmp
 
 def caculateTheLineDaoshu(line):
 	# 根据传入的数据，进行计算，返回想要的ｂｉｄ,ask ,lastPrice,MiddPoint,WeightActive
-	lastPrice = round(1/float(line[4]),2)
+	lastPrice = 1/float(line[4])
 	bid = float(line[22])
 	bidNum = float(line[23])
 	ask = float(line[24])
 	askNum = float(line[25])
-	MiddPoint = round(2/(bid+ask),2)
+	MiddPoint = 2/(bid+ask)
 	# 这个主要是用来保留２位小数。
-	WeightActive = round((askNum+bidNum)/(ask*bidNum+bid*askNum),2)
+	WeightActive = (askNum+bidNum)/(ask*bidNum+bid*askNum)
 	tmp = [bid,ask,lastPrice,MiddPoint,WeightActive]
 	return tmp
 
