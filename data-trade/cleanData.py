@@ -2,6 +2,17 @@
 import csv
 import os
 
+def sort(filename):
+    data = csv.reader(open(filename),delimiter=',')  
+    sortedlist = sorted(data, key = lambda x: (x[20], int(x[21])))  
+    with open(filename, "wb") as f:  
+        fileWriter = csv.writer(f, delimiter=',')  
+        for row in sortedlist:  
+            fileWriter.writerow(row)  
+    f.close()
+
+
+
 # 根据毫秒的交易时间来去除数据，也就是说每一秒有２条数据
 def cleanCsv(path):
 	csvFile = file(path,'rb')
@@ -18,6 +29,7 @@ def cleanCsv(path):
 	preLine = [0]*44
 	nowTime = 0
 	for line in reader:
+		# print line
 		# 获取到时间和ｔｉｃｋ的值
 		timeLine = line[20].split(":")
 		# tick = line[21]
@@ -84,6 +96,7 @@ def cleanCsv(path):
 	# 清理最后的不是交易时间额数据，为了保证安全，必须重新清晰一次，因为有的时候，时间会有非空闲数据。
 	cleanData = []
 	for line in writeToCsvData:
+		# print line
 		timeLine = line[20].split(":")
 		nowTime = int(timeLine[0])*3600+int(timeLine[1])*60+int(timeLine[2])
 		# 只是获取到交易时间的数据。
@@ -92,7 +105,8 @@ def cleanCsv(path):
 
 	csvFile.close()
 	cleanDataPath = path.split('/')
-	cleanPath = "./clean/"+"clean_"+cleanDataPath[2]
+	# cleanPath = "./clean/"+"clean_"+cleanDataPath[2]
+	cleanPath = "./"+"clean_"+cleanDataPath[1]
 	print cleanPath
 	writeToCsv(cleanData,cleanPath)
 
@@ -124,8 +138,9 @@ def convertNumToTime(num):
 
 if __name__ == '__main__':
 	print "clean the data"
-	# cleanCsv('./20170522_m1709P2750.csv')
-	for root,dirs,files in os.walk("./option"):
-		for name in files:
-			tmp= os.path.join(root,name)
-			cleanCsv(tmp)
+	# sort('./20170605_pb1707.csv')
+	cleanCsv('./20170605_pb1707.csv')
+	# for root,dirs,files in os.walk("./option"):
+	# 	for name in files:
+	# 		tmp= os.path.join(root,name)
+	# 		cleanCsv(tmp)

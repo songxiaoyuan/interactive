@@ -100,24 +100,44 @@ def getCsvFileData(putPath,callPath):
 	# 开始处理ＥＭＡ，生产相应的ＭＥＡ数据。
 	calEma("./put_call_data.csv",200)
 
+def getLastPriceData(filepath):
+	fileput = file(filepath,'rb')
+	readerput = csv.reader(fileput)
+	data = []
+	for line in readerput:
+		lastPrice = line[4].strip()
+		time = line[20].strip()
+		tmp = time + ','+lastPrice
+		data.append(tmp)
 
+	writeArraytojs(data)
+
+def writeArraytojs(data):
+	jsfile = open('data.js',"w")
+	
+	jsfile.writelines("var data = [")
+	for l in data:
+		tmp ='"'+l+'"'+','+'\n'
+		jsfile.writelines(tmp)
+	jsfile.writelines("]")
 
 if __name__ == '__main__':
 	# calEma()
-	tmpSet = set()
-	for root,dirs,files in os.walk("./clean"):
-		for name in files:
-			tmp= os.path.join(root,name)
-			if 'P' in tmp:
-				tmpSet.add(tmp)
-				# cleanCsv(tmp)
-	for item in tmpSet:
-		putPath = item
-		callPath = item.replace('P','C')
-		print callPath
-		getCsvFileData(putPath,callPath)
-		getDataPath = "./getData/"+putPath.split('/')[2][5:]
-		writeTheOrderData(getDataPath)
+	# tmpSet = set()
+	# for root,dirs,files in os.walk("./clean"):
+	# 	for name in files:
+	# 		tmp= os.path.join(root,name)
+	# 		if 'P' in tmp:
+	# 			tmpSet.add(tmp)
+	# 			# cleanCsv(tmp)
+	# for item in tmpSet:
+	# 	putPath = item
+	# 	callPath = item.replace('P','C')
+	# 	print callPath
+	# 	getCsvFileData(putPath,callPath)
+	# 	getDataPath = "./getData/"+putPath.split('/')[2][5:]
+	# 	writeTheOrderData(getDataPath)
 	# callPath="clean_20170515_m1709C2700.csv"
 	# getDataPath = "./getData"+callPath[5:]
 	# print getDataPath
+	getLastPriceData("./clean_20170605_pb1707.csv")
